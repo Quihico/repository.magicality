@@ -16,7 +16,6 @@ def Image(x):
 	for item in contents:
 		find = re.findall("{x}\..*".format(x=x),item,re.IGNORECASE)
 		if len(find) == 1:
-			xbmc.log(Join(find[0]),2)
 			return Join(find[0])
 	return False
 
@@ -47,29 +46,29 @@ def GetURL(url,cookie="dubbedanime.cookie",data=None):
 	if os.path.exists(cookies_location):
 		cookies.load(cookies_location)
 	handlers = [
-	    urllib2.HTTPHandler(),
-	    urllib2.HTTPSHandler(),
-	    urllib2.HTTPCookieProcessor(cookies)
-	    ]
+		urllib2.HTTPHandler(),
+		urllib2.HTTPSHandler(),
+		urllib2.HTTPCookieProcessor(cookies)
+		]
 	opener = urllib2.build_opener(*handlers)
 
 	def fetch(uri):
-	    req = urllib2.Request(uri,data=data)
-	    req.add_header('User-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299')
-	    return opener.open(req)
+		req = urllib2.Request(uri,data=data)
+		req.add_header('User-agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36 Edge/16.16299')
+		return opener.open(req)
 
 	def dump():
-	    for cookie in cookies:
-	        print cookie.name, cookie.value
+		for cookie in cookies:
+			print cookie.name, cookie.value
 	res = fetch(url)
 	cookies.save(cookies_location)
 	return [res,cookies]
 
 def GetVideoLinks(url):
 	req = GetURL(url)
-	Data = Compile(r"var episode_videos = (\[.*\])",req[0].read())[0]
-	JSON = json.loads(Data)
-	return JSON
+	Data = Compile(r"var episode = (.*);",req[0].read())
+	JSON = json.loads(str(Data[0].replace("\\", "")))
+	return JSON['videos']
 
 def GetLink(host,id):
 	if "trollvid" in host:

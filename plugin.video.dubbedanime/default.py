@@ -1,9 +1,6 @@
 import xbmc,urlparse,xbmcplugin,xbmcgui,json,sys
 from functions import *
 
-
-
-
 def Index():
 	Add("Search",mode="Search",folder=True)
 	Add("Genres",mode="Genres",folder=True)
@@ -29,7 +26,7 @@ def Searchterm(term):
 def Genres():
 	Data = GetURL("https://dubbedanime.net/genres")
 	bs = Soup(Data[0].read())
-	Content = bs.find_all("div","form-check form-check-inline")
+	Content = bs.find_all("li","w-25 float-left form-check justify-content-start")
 	for genre in Content:
 		try:
 			String = genre.label.string
@@ -66,7 +63,6 @@ def Series(url):
 			pass
 	xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
 
-
 def NewEpisodes():
 	Data = GetURL("https://dubbedanime.net/")
 	bs = Soup(Data[0].read())
@@ -97,12 +93,13 @@ mode = None
 ###############################################################################################################
 for x in urlparse.parse_qsl(sys.argv[2][1:]):globals()[x[0]] = x[1]
 ###############################################################################################################
-if	  mode		==	  "Play":		Play(name,url)
-elif  mode		==	  "Playlist":	Playlist(name,url,iconimage)
-elif  mode 		== 	  "Series":		Series(url)
-elif  mode 		== 	  "Genres":		Genres()
-elif  mode 		== 	  "Genre":		Genre(name)
-elif  mode 		== 	  "Latest": 	NewEpisodes()
-elif  mode 		== 	  "Search": 	Search()
+if		mode	==	"Play":			Play(name,url)
+elif	mode	==	"Playlist":		Playlist(name,url,iconimage)
+elif	mode	==	"Series":		Series(url)
+elif	mode	==	"Genres":		Genres()
+elif	mode	==	"Genre":		Genre(name)
+elif	mode	==	"Latest": 		NewEpisodes()
+elif	mode	==	"Search": 		Search()
+elif	mode	==	"Searchterm":	Searchterm(name)
 else:Index()
 EndOfDirectory()
